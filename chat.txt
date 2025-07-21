@@ -1,0 +1,62 @@
+Player.js:
+export default class Player extends Phaser.Physics.Arcade.Sprite {
+  constructor(scene, x, y) {
+    super(scene, x, y, 'player');
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.setCollideWorldBounds(true);
+    this.cursors = scene.input.keyboard.createCursorKeys();
+  }
+
+  update() {
+    if (this.cursors.left.isDown) this.setVelocityX(-160);
+    else if (this.cursors.right.isDown) this.setVelocityX(160);
+    else this.setVelocityX(0);
+
+    if (this.cursors.up.isDown && this.body.touching.down)
+      this.setVelocityY(-330);
+  }
+}
+
+Level0.js:
+import Player from '../objects/Player.js';
+import { setupCollisions } from '../physics/collisions.js';
+
+export default class Level0 extends Phaser.Scene {
+  constructor() {
+    super('Level0');
+  }
+
+  preload() {
+    this.load.image('player', 'assets/player.png');
+  }
+
+  create() {
+    const player = new Player(this, 100, 300);
+    const platforms = this.physics.add.staticGroup();
+    platforms.create(400, 500, 'ground');
+
+    setupCollisions(this, player, [], platforms);
+
+    this.player = player; // store for update
+  }
+
+  update() {
+    this.player.update();
+  }
+}
+
+
+game.js:
+import Level0 from './scenes/Level0.js';
+
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  physics: { default: 'arcade', arcade: { gravity: { y: 500 }, debug: true } },
+  scene: [Level0]
+};
+
+new Phaser.Game(config);
+
