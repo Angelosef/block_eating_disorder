@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import Level0 from './scenes/Level0.js';
 
 const config = {

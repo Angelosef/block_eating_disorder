@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 import Player from '../objects/Player.js';
 import { setupCollisions } from '../physics/collisions.js';
 
