@@ -1,0 +1,7 @@
+2d platformer
+player can eat up boxes and spit them out to overcome obstacles
+different boxes have different shape or mechanics
+
+wasd - to move
+k - to eat
+o - to spit
