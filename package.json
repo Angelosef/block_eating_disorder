@@ -4,7 +4,10 @@
   "description": "enjoy!",
   "main": "game.js",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,7 @@
     "phaser": "^3.90.0"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vite": "^7.0.5"
   }
 }

@@ -1,11 +1,6 @@
+// vite.config.js
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: '.',
-  server: {
-    open: 'index.html',
-  },
-  build: {
-    outDir: 'dist',
-  },
+  base: '/block_eating_disorder.git', // <- replace with your actual GitHub repo name
 });

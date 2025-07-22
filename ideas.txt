@@ -1,6 +1,8 @@
 2d platformer
 player can eat up boxes and spit them out to overcome obstacles
 different boxes have different shape or mechanics
+boxes eaten and spit out change their state to penalize careless reordering of boxes
+for example boxes cannot be moved after eaten and spit out (once/twice)
 
 wasd - to move
 k - to eat
