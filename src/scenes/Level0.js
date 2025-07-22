@@ -9,8 +9,8 @@ export default class Level0 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('player', 'assets/pngs/player.png');
-    this.load.image('ground', 'assets\\pngs\\tile.png');
+    this.load.image('player', '/block_eating_disorder.git/assets/pngs/player.png');
+    this.load.image('ground', '/block_eating_disorder.git/assets/pngs/tile.png');
   }
 
   create() {
