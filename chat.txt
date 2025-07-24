@@ -1,62 +1,132 @@
-Player.js:
+do you think the code here is structured well? How would you refactor it to make it more maintainable/robust? 
+
+// player.js
+import Phaser from 'phaser';
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'player');
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(true);
-    this.cursors = scene.input.keyboard.createCursorKeys();
+    this.keys = scene.input.keyboard.addKeys({
+      w: Phaser.Input.Keyboard.KeyCodes.W,
+      a: Phaser.Input.Keyboard.KeyCodes.A,
+      d: Phaser.Input.Keyboard.KeyCodes.D,
+      k: Phaser.Input.Keyboard.KeyCodes.K,
+      o: Phaser.Input.Keyboard.KeyCodes.O
+    });
+    this.body.setGravityY(200);
+    this.directionEnum = {
+      left: 0,
+      right: 1,
+      front: 2
+    };
+    this.direction = this.directionEnum.front;
+    this.belly = [];
+    this.MaxBellySize = 2;
   }
 
-  update() {
-    if (this.cursors.left.isDown) this.setVelocityX(-160);
-    else if (this.cursors.right.isDown) this.setVelocityX(160);
-    else this.setVelocityX(0);
+  update(edibleBlocks) {
+    if (this.keys.a.isDown) {
+      this.direction = this.directionEnum.left;
+      this.setVelocityX(-160);
+    }
+    else if (this.keys.d.isDown) {
+      this.direction = this.directionEnum.right;
+      this.setVelocityX(160);
+    }
+    else {
+      this.direction = this.directionEnum.front;
+      this.setVelocityX(0);
+    }
 
-    if (this.cursors.up.isDown && this.body.touching.down)
+    if (this.keys.w.isDown && this.body.touching.down)
       this.setVelocityY(-330);
+
+    if (this.keys.k.isDown) {
+      console.log('try eating block');
+      this.tryEatingBlock(edibleBlocks);
+    }
+    else if (this.keys.o.isDown) {
+      this.spitOutBlock(edibleBlocks);
+    }
   }
+
+  tryEatingBlock(edibleBlocks) {
+      for (const edibleBlock of edibleBlocks) {
+          const edibleBlockCoordinates = {x:edibleBlock.x, y:edibleBlock.y};
+          console.log('checking to eat block');
+          if (this.availableToEat(edibleBlockCoordinates)) {
+              console.log('ate block');
+              this.eatBlock(edibleBlock);
+              edibleBlocks.pop();
+          }
+      }
+  }
+
+  eatBlock(edibleBlock) {
+      edibleBlock.eaten();
+      this.belly.push(edibleBlock);
+      console.log(this.belly.length);
+  }
+
+  spitOutBlock(edibleBlocks) {
+    if (this.belly.length > 0) {
+      console.log('spitting out block');
+      const edibleBlock = this.belly.pop();
+      edibleBlocks.push(edibleBlock);
+      console.log(this.belly.length);
+      edibleBlock.spittedOut({x:this.body.x, y:this.body.y});
+    }
+  }
+
+  availableToEat(edibleBlockCoordinates) {
+      const availablefoodSpace = this.belly.length < this.MaxBellySize;
+      return availablefoodSpace && this.facingCorrectDirection(edibleBlockCoordinates) && this.inEatingDistance(edibleBlockCoordinates);
+  }
+
+  facingCorrectDirection(edibleBlockCoordinates) {
+      const horizDifference = this.body.x - edibleBlockCoordinates.x;
+      const leftOfFood = (horizDifference < 0) && (this.direction == this.directionEnum.right);
+      const rightOfFood = (horizDifference > 0) && (this.direction == this.directionEnum.left);
+      return (leftOfFood || rightOfFood);
+  }
+
+  inEatingDistance(edibleBlockCoordinates) {
+      const horizDistance = Math.abs(this.x - edibleBlockCoordinates.x);
+      const verticalDistance = Math.abs(this.y - edibleBlockCoordinates.y);
+
+      const isInEatingDistance = (horizDistance < 60) && (verticalDistance < 5);
+      if (isInEatingDistance) {
+        console.log('in eating distance');
+      }
+
+      return isInEatingDistance;
+  }
+  
 }
 
-Level0.js:
-import Player from '../objects/Player.js';
-import { setupCollisions } from '../physics/collisions.js';
+// edibleBlock.js
+import Block from './block';
 
-export default class Level0 extends Phaser.Scene {
-  constructor() {
-    super('Level0');
-  }
+export default class EdibleBlock extends Block {
+    static MAX_TIMES_EATEN = 1;
 
-  preload() {
-    this.load.image('player', 'assets/player.png');
-  }
+    constructor(scene, x, y) {
+        super(scene, x, y, 'edibleBlock');
+        this.body.setDrag(800, 0);
 
-  create() {
-    const player = new Player(this, 100, 300);
-    const platforms = this.physics.add.staticGroup();
-    platforms.create(400, 500, 'ground');
+        this.timesEaten = 0;
+    }
 
-    setupCollisions(this, player, [], platforms);
+    eaten() {
+        this.timesEaten++;
+        this.disableBody(true, true);
+    }
 
-    this.player = player; // store for update
-  }
-
-  update() {
-    this.player.update();
-  }
+    spittedOut(playerCoordinates) {
+        console.log('enabling body');
+        this.enableBody(true, playerCoordinates.x+100, playerCoordinates.y, true, true);
+    }
 }
-
-
-game.js:
-import Level0 from './scenes/Level0.js';
-
-const config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: { default: 'arcade', arcade: { gravity: { y: 500 }, debug: true } },
-  scene: [Level0]
-};
-
-new Phaser.Game(config);
-

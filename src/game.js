@@ -1,12 +1,15 @@
 import Phaser from 'phaser';
-import Level0 from './scenes/Level0.js';
+import Playground from './scenes/playground.js';
+
+const width = 800;
+const height = 600;
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: { default: 'arcade', arcade: { gravity: { y: 500 }, debug: true } },
-  scene: [Level0]
+  width: width,
+  height: height,
+  physics: { default: 'arcade', arcade: { gravity: { y: 400 }, debug: true } },
+  scene: [Playground]
 };
 
 new Phaser.Game(config);
