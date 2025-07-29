@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 
 import Player from '../objects/Player.js';
-import StaticBlock from '../objects/staticBlock.js';
-import EdibleBlock from '../objects/edibleBlock.js';
-import EdibleBlockManager from '../managers/EdibleBlockManager.js';
+import StaticBlock from '../objects/blocks/StaticBlock.js';
+import DynamicBlock from '../objects/blocks/DynamicBlock.js';
+import InventoryManager from '../managers/InventoryManager.js';
 import InputManager from '../managers/InputManager.js';
+import CollisionManager from '../managers/CollisionManager.js';
+import GameObjectManager from '../managers/GameObjectManager.js';
 
 export default class Playground extends Phaser.Scene {
   constructor() {
@@ -18,35 +20,29 @@ export default class Playground extends Phaser.Scene {
   }
 
   create() {
-    this.InputManager = new InputManager(this, ['W', 'A', 'D', 'K', 'O']);
-    const blockSize = 32;
+    this.inputManager = new InputManager(this, ['W', 'A', 'D', 'K', 'O']);
+    this.collisionManager = new CollisionManager(this);
+    this.inventoryManager = new InventoryManager(this);
+    this.gameObjectManager = new GameObjectManager();
+
+    
     this.player = new Player(this, 100, 300);
-    this.platforms = this.add.group();
-    for (let x = 20; x < 800; x += blockSize+5) {
-      const block = new StaticBlock(this, x, 500);
-      this.platforms.add(block);
+    const blockSize = 32;
+    for (let x = 20; x < 800; x += blockSize+2) {
+      new StaticBlock(this, x, 500);
     }
 
-    const jumpingBlock = new StaticBlock(this, 400, 400);
-    const edibleBlock = new EdibleBlock(this, 300, 400);
-
-    const edibleBlocks = [edibleBlock];
-    this.edibleBlockManager = new EdibleBlockManager(this.player, edibleBlocks);
-
-    this.physics.add.collider(this.platforms, this.player);
-    this.physics.add.collider(this.platforms, jumpingBlock);
-    this.physics.add.collider(this.player, jumpingBlock);
-    this.physics.add.collider(this.platforms, edibleBlock);
-    this.physics.add.collider(this.player, edibleBlock);
+    new StaticBlock(this, 400, 400);
+    new DynamicBlock(this, 300, 400, 0, 2);
   }
 
   update() {
-    this.InputManager.update();
-    this.player.update(this.InputManager);
-    this.edibleBlockManager.update(this.InputManager);
+    this.inputManager.update();
+    this.inventoryManager.update();
+    this.gameObjectManager.update();
+    
+    this.inventoryManager.cleanUp();
+    this.gameObjectManager.cleanUp();
   }
   
-  foo () {
-    console.log("collision");
-  }
 }
