@@ -4,8 +4,8 @@ export default class CollisionManager {
         this.staticObjects = scene.add.group();
         this.dynamicObjects = scene.add.group();
         
-        scene.physics.add.collider(this.staticObjects, this.dynamicObjects, this.handleCollision);
-        scene.physics.add.collider(this.dynamicObjects, this.dynamicObjects, this.handleCollision);
+        scene.physics.add.overlap(this.staticObjects, this.dynamicObjects, this.handleCollision);
+        scene.physics.add.overlap(this.dynamicObjects, this.dynamicObjects, this.handleCollision);
     }
 
     addStaticObject(object) {

@@ -22,10 +22,10 @@ export default class DynamicObject extends GameObject {
     }
 
     staticObjectCollision(object) {
-        this.scene.physics.world.separate(this, object);
+        this.scene.physics.world.collide(this, object);
     }
 
     dynamicObjectCollision(object) {
-        this.scene.physics.world.separate(this, object);
+        this.scene.physics.world.collide(this, object);
     }
 }

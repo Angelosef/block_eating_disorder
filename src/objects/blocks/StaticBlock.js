@@ -18,7 +18,7 @@ export default class StaticBlock extends StaticObject {
 
     createBlock() {
         this.setDestroyedFlag();
-        return new StaticBlock(this.scene, 0, 0, this.timesEaten++, this.maxTimesEaten);
+        return new StaticBlock(this.scene, 0, 0, this.timesEaten+1, this.maxTimesEaten);
     }
 
     spitOut() {

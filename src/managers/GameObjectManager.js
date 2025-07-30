@@ -12,7 +12,6 @@ export default class GameObjectManager {
         for(const gameObject of this.gameObjects) {
             gameObject.update();
         }
-        console.log(this.gameObjects.length);
     }
 
     cleanUp() {

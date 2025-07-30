@@ -19,7 +19,7 @@ export default class DynamicBlock extends DynamicObject {
 
     createBlock() {
         this.setDestroyedFlag();
-        return new DynamicBlock(this.scene, 0, 0, this.timesEaten++, this.maxTimesEaten);
+        return new DynamicBlock(this.scene, 0, 0, this.timesEaten + 1, this.maxTimesEaten);
     }
 
     spitOut() {

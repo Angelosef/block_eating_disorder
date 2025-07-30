@@ -15,7 +15,9 @@ export default class GameObject extends Phaser.Physics.Arcade.Sprite {
     setActive(flag) {
         if (flag) {
             this.inactiveFlag = false;
+            this.setVisible(true);
             this.enableBody();
+        
         }
         else {
             this.inactiveFlag = true;

@@ -1,4 +1,9 @@
+
 import DynamicObject from "./DynamicObject";
+import Flag from "./Flag";
+import Lava from "./Lava";
+import Utils from "../utils";
+import Activator from "./activators/Activator";
 
 export default class Player extends DynamicObject {
   constructor(scene, x, y) {
@@ -10,6 +15,8 @@ export default class Player extends DynamicObject {
       front: 2
     };
     this.direction = this.directionEnum.front;
+    this.isAlive = true;
+    this.won = false;
   }
 
   update() {
@@ -28,6 +35,22 @@ export default class Player extends DynamicObject {
 
     if (this.inputManager.isDown('W') && this.body.touching.down)
       this.setVelocityY(-200);
+    }
+
+    handleCollision(object) {
+      if (object instanceof Lava) {
+        this.isAlive = false;
+      }
+      else if (object instanceof Flag) {
+        this.won = true;
+      }
+      else if (object instanceof Activator) {
+        Utils.doNothing();
+      }
+
+      else {
+        super.handleCollision(object);
+      }
     }
 
 }
