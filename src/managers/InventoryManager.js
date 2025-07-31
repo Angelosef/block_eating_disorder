@@ -50,19 +50,21 @@ export default class InventoryManager {
         const player = this.scene.player;
 
         const horizDifference = playerPosition.x - blockPosition.x;
-        const leftOfFood = (horizDifference < 0) && (player.direction == player.directionEnum.right);
-        const rightOfFood = (horizDifference > 0) && (player.direction == player.directionEnum.left);
+        const leftOfFood = (horizDifference < 0) && (player.direction == Utils.directionEnum.right);
+        const rightOfFood = (horizDifference > 0) && (player.direction == Utils.directionEnum.left);
         return (leftOfFood || rightOfFood);
     }
 
     inEatingDistance(block) {
-        const blockPosition = Utils.getPosition(block.body);
-        const playerPosition = Utils.getPosition(this.scene.player.body);
-
+        const blockPosition = block.body.center;
+        const playerPosition = this.scene.player.body.center;
+        const width = block.body.width;
+        const height = block.body.height;
+        
         const horizDistance = Math.abs(playerPosition.x - blockPosition.x);
         const verticalDistance = Math.abs(playerPosition.y - blockPosition.y);
 
-        const isInEatingDistance = (horizDistance < 60) && (verticalDistance < 5);
+        const isInEatingDistance = (horizDistance < width*1.5) && (verticalDistance < height*0.5);
        
         return isInEatingDistance;
     }

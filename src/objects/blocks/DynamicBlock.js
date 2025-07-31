@@ -23,9 +23,9 @@ export default class DynamicBlock extends DynamicObject {
     }
 
     spitOut() {
-        const playerPosition = Utils.getPosition(this.scene.player.body);
-        let offset = 60;
-        if(this.scene.player.direction == this.scene.player.directionEnum.left) {
+        const playerPosition = this.scene.player.body.center;
+        let offset = this.scene.player.body.width * 1.1;
+        if(this.scene.player.direction == Utils.directionEnum.left) {
             offset = -1 * offset;
         }
         this.setPosition(playerPosition.x+offset, playerPosition.y);

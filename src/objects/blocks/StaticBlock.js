@@ -22,9 +22,9 @@ export default class StaticBlock extends StaticObject {
     }
 
     spitOut() {
-        const playerPosition = Utils.getPosition(this.scene.player.body);
-        let offset = 40;
-        if(this.scene.player.direction == this.scene.player.directionEnum.left) {
+        const playerPosition = this.scene.player.body.center;
+        let offset = this.scene.player.body.width * 1.1;
+        if(this.scene.player.direction == Utils.directionEnum.left) {
             offset = -1 * offset;
         }
         this.setPosition(playerPosition.x+offset, playerPosition.y);
