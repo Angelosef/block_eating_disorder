@@ -52,23 +52,23 @@ export default class Playground extends Phaser.Scene {
     for (let x = 20; x < 800; x += blockSize+2) {
       new StaticBlock(this, x, 500);
     }
-    this.player = new Player(this, 100, groundLevel);
+    this.player = new Player(this, 400, groundLevel);
 
     new StaticBlock(this, 400, 400);
-    new DynamicBlock(this, 150, groundLevel);
+    new DynamicBlock(this, 600, groundLevel, 0, 10);
     new StaticBlock(this, 500, 400, 0, 10);
 
-    new Lava(this, 600, 400);
-    new Flag(this, 200, 300);
-    const startingPoint = new Phaser.Math.Vector2(200, 200);
-    const endingPoint = new Phaser.Math.Vector2(400, 200);
+    //new Lava(this, 600, 400);
+    //new Flag(this, 200, 300);
+    const startingPoint = new Phaser.Math.Vector2(200, 350);
+    const endingPoint = new Phaser.Math.Vector2(400, 350);
     new MovingBlock(this, startingPoint, endingPoint, 0, 'forward', 0.1);
-    this.button = new Button(this, 100, 400);
-    this.switch = new Switch(this, 50, 400);
-    new ButtonTrigger(this, 100, 100, this.button);
-    new SwitchTrigger(this, 50, 100, this.switch);
+    //this.button = new Button(this, 100, 400);
+    //this.switch = new Switch(this, 50, 400);
+    //new ButtonTrigger(this, 100, 100, this.button);
+    //new SwitchTrigger(this, 50, 100, this.switch);
     new Trampoline(this, 250, 500-blockSize, Utils.directionEnum.up);
-    new Balloon(this, 460, 450);
+    //new Balloon(this, 460, 450);
   }
 
   update() {

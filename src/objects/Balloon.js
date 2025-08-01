@@ -33,38 +33,13 @@ export default class Balloon extends DynamicObject {
         }
     }
 
-    collisionType(object) {
-        const body1 = this.body;
-        const body2 = object.body;
-
-        const leftOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.left);
-        const rightOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.right);
-        const upOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.up);
-        const downOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.down);
-
-        const overlaps = [
-            { dir: Utils.directionEnum.left, val: leftOverlap },
-            { dir: Utils.directionEnum.right, val: rightOverlap },
-            { dir: Utils.directionEnum.up, val: upOverlap },
-            { dir: Utils.directionEnum.down, val: downOverlap }
-        ];
-
-        let maxOverlap = overlaps[0];
-        for (let i = 0; i < overlaps.length; i++) {
-            if (overlaps[i].val > maxOverlap.val) {
-                maxOverlap = overlaps[i];
-            }
-        }
-        return maxOverlap.dir;
-    }
-
     movingObjectCollision(object) {
         const delta = this.scene.game.loop.delta;
         const dt = delta / 1000;
         const objectVelocityX = object.body.deltaX() / dt;
         const objectVelocityY = object.body.deltaY() / dt;
         
-        switch(this.collisionType(object)) {
+        switch(Utils.collisionType(this.body, object.body)) {
             case Utils.directionEnum.left:
                 if(objectVelocityX > 0) {
                     this.body.setVelocity(this.speed, 0);

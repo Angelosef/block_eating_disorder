@@ -10,7 +10,7 @@ export default class DynamicBlock extends DynamicObject {
         if (this.isEdible()) {
             scene.inventoryManager.addItem(this);
         }
-        this.setDrag(600, 0);
+        this.setDragX(300);
     }
 
     eaten() {

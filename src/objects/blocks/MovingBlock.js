@@ -13,6 +13,7 @@ export default class MovingBlock extends StaticObject {
         this.direction = direction;
         this.speed = speed;
         this.positionParameter = offset;
+        this.body.setFriction(1,1);
     }
 
     update() {
@@ -33,8 +34,7 @@ export default class MovingBlock extends StaticObject {
         }
 
         const position = Utils.getLinePoint(this.startPoint, this.endPoint, this.positionParameter);
-        this.body.x = position.x;
-        this.body.y = position.y;
+        this.body.setVelocity((position.x-this.body.x)/dt, (position.y-this.body.y)/dt);
     }
 
 }

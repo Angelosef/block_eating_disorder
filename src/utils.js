@@ -116,5 +116,41 @@ export default class Utils {
         return Math.max(0, overlapEnd - overlapStart);
     }
 
+    static collisionType(body1, body2) {
+        const leftOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.left);
+        const rightOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.right);
+        const upOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.up);
+        const downOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.down);
+
+        const overlaps = [
+            { dir: Utils.directionEnum.left, val: leftOverlap },
+            { dir: Utils.directionEnum.right, val: rightOverlap },
+            { dir: Utils.directionEnum.up, val: upOverlap },
+            { dir: Utils.directionEnum.down, val: downOverlap }
+        ];
+
+        let maxOverlap = overlaps[0];
+        for (let i = 0; i < overlaps.length; i++) {
+            if (overlaps[i].val > maxOverlap.val) {
+                maxOverlap = overlaps[i];
+            }
+        }
+        return maxOverlap.dir;
+    }
+
+    static isOnTopOf(body1, body2) {
+        const downOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.down);
+        let onTopOf = Utils.collisionType(body1, body2) == Utils.directionEnum.down;
+        onTopOf = onTopOf && (downOverlap > (body1.width*0.1));
+
+        return onTopOf;
+    }
+
+    static simulateFriction(body1, body2) {
+        //body1 slides on body 2
+        const velocity2X = body2.velocity.x;
+        body1.setVelocityX(velocity2X);
+    }
+
 }
 
