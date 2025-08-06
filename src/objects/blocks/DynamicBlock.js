@@ -1,5 +1,6 @@
 import Utils from "../../utils";
 import DynamicObject from "../DynamicObject";
+import Phaser from "phaser";
 
 export default class DynamicBlock extends DynamicObject {
     
@@ -10,7 +11,18 @@ export default class DynamicBlock extends DynamicObject {
         if (this.isEdible()) {
             scene.inventoryManager.addItem(this);
         }
-        this.setDragX(300);
+    }
+
+    clone() {
+        const newDynamicBlock = new DynamicBlock(this.scene, 0, 0);
+        newDynamicBlock.copy(this);
+        return newDynamicBlock;
+    }
+
+    copy(dynamicBlock) {
+        super.copy(dynamicBlock);
+        this.maxTimesEaten = dynamicBlock.maxTimesEaten;
+        this.timesEaten = dynamicBlock.timesEaten;
     }
 
     eaten() {
@@ -19,20 +31,94 @@ export default class DynamicBlock extends DynamicObject {
 
     createBlock() {
         this.setDestroyedFlag();
-        return new DynamicBlock(this.scene, 0, 0, this.timesEaten + 1, this.maxTimesEaten);
+        const newBlock = new DynamicBlock(this.scene, 0, 0, this.timesEaten + 1, this.maxTimesEaten);
+        newBlock.initialize();
+        return newBlock;
     }
 
-    spitOut() {
-        const playerPosition = this.scene.player.body.center;
-        let offset = this.scene.player.body.width * 1.1;
-        if(this.scene.player.direction == Utils.directionEnum.left) {
-            offset = -1 * offset;
+    canSpitOut() {
+            const pos = this.spitOutPosition();
+            const width = this.body.width*0.9;
+            const height = this.body.height*0.9;
+    
+            return this.haveAvailableSpace(pos, width, height);
         }
-        this.setPosition(playerPosition.x+offset, playerPosition.y);
-    }
+    
+        haveAvailableSpace(position, width, height) {
+            // First, check world boundaries.
+            const worldBounds = this.scene.physics.world.bounds;
+            const proposedX = position.x;
+            const proposedY = position.y;
+    
+            const fitsHorizontally = (proposedX >= worldBounds.x) && (proposedX + width <= worldBounds.width);
+            const fitsVertically = (proposedY >= worldBounds.y) && (proposedY + height <= worldBounds.height);
+    
+            if (!fitsHorizontally || !fitsVertically) {
+                return false;
+            }
+    
+            let hasOverlap = false;
+            const tempRect = new Phaser.Geom.Rectangle(proposedX-width/2, proposedY-height/2, width, height);
+    
+            // Inside a Phaser Scene class
+            const dynamicBodies = this.scene.physics.world.bodies.entries;
+            for (const body of dynamicBodies) {
+                if(DynamicBlock.checkBodyOverlapWithRectangle(body, tempRect) && body.enable) {
+                    hasOverlap = true;
+                }
+            }
+    
+            const staticBodies = this.scene.physics.world.staticBodies.entries;
+    
+            for (const staticBody of staticBodies) {
+                if(DynamicBlock.checkBodyOverlapWithRectangle(staticBody, tempRect) && this.body.enable) {
+                    hasOverlap = true;
+                }
+            }
+    
+            return !hasOverlap;
+        }
+    
+        // A function that checks for overlap between a given body and a rectangle.
+        static checkBodyOverlapWithRectangle(body, rectangle) {
+            // 1. Create a temporary rectangle from the body's properties.
+            const bodyRectangle = new Phaser.Geom.Rectangle(
+                body.x,
+                body.y,
+                body.width,
+                body.height
+            );
+    
+            // 2. Use the Intersects utility to check for overlap.
+            const isOverlapping = Phaser.Geom.Intersects.RectangleToRectangle(
+                bodyRectangle,
+                rectangle
+            );
+    
+            return isOverlapping;
+        }
+    
+        spitOutPosition() {
+            const playerPosition = this.scene.player.body.center;
+            let offset = this.scene.player.body.width * 1.1;
+            if(this.scene.player.direction == Utils.directionEnum.left) {
+                offset = -1 * offset;
+            }
+            return new Phaser.Math.Vector2(playerPosition.x+offset, playerPosition.y);
+        }
+    
+        spitOut() {
+            const pos = this.spitOutPosition();
+            this.setPosition(pos.x, pos.y);
+        }
+    
 
     isEdible() {
         return this.timesEaten < this.maxTimesEaten;
+    }
+
+    handleCollision(object) {
+            super.handleCollision(object);
     }
 
 }

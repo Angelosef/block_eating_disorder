@@ -7,6 +7,17 @@ export default class Activator extends StaticObject {
         this.framesSinceLastCollision = 2;
         this.pressed = false;
     }
+    clone() {
+        const newActivator = new Activator(this.scene, 0, 0);
+        newActivator.copy(this);
+        return newActivator;
+    }
+
+    copy(activator) {
+        super.copy(activator);
+        this.framesSinceLastCollision = activator.framesSinceLastCollision;
+        this.pressed = activator.framesSinceLastCollisions;
+    }
 
     update() {
         this.framesSinceLastCollision = Math.min(this.framesSinceLastCollision+1, 3);

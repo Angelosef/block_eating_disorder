@@ -1,5 +1,6 @@
 import GameObject from "./GameObject";
 import StaticObject from "./StaticObject";
+import Utils from "../utils";
 
 export default class DynamicObject extends GameObject {
     constructor(scene, x, y, textureString='') {
@@ -22,10 +23,11 @@ export default class DynamicObject extends GameObject {
     }
 
     staticObjectCollision(object) {
-        this.scene.physics.world.collide(this, object);
+        Utils.staticCollides(this.body, object.body);
     }
 
     dynamicObjectCollision(object) {
-        this.scene.physics.world.collide(this, object);
+        Utils.dynamicCollides(this.body, object.body);
     }
 }
+

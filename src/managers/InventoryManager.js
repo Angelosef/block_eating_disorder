@@ -32,10 +32,15 @@ export default class InventoryManager {
     }
 
     spitOutBlock() {
+        
         if (this.inventory.length > 0) {
-            const oldBlock = this.inventory.pop();
-            const newBlock = oldBlock.createBlock();
-            newBlock.spitOut();
+            const lastBlock = this.inventory[this.inventory.length-1];
+            const canSpitOut = lastBlock.canSpitOut();
+            if(canSpitOut) {
+                const oldBlock = this.inventory.pop();
+                const newBlock = oldBlock.createBlock();
+                newBlock.spitOut();
+            }
         }
     }
 

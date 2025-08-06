@@ -1,19 +1,35 @@
 import Utils from "../../utils";
 import StaticObject from "../StaticObject";
+import Phaser from "phaser";
 
 export default class MovingBlock extends StaticObject {
     constructor(scene, startPoint, endPoint, offset=0, direction='forward', speed=0.1) {
         const initialPosition = Utils.getLinePoint(startPoint, endPoint, offset);
-
         super(scene, initialPosition.x, initialPosition.y, 'movingBlock');
         this.body.moves = true;
         this.body.setAllowGravity(false);
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
+        this.startPoint = startPoint.clone();
+        this.endPoint = endPoint.clone();
         this.direction = direction;
         this.speed = speed;
         this.positionParameter = offset;
-        this.body.setFriction(1,1);
+        this.setFrictionX(1);
+    }
+
+    clone() {
+        const zero = new Phaser.Math.Vector2(0, 0);
+        const newMovingBlock = new MovingBlock(this.scene, zero, zero);
+        newMovingBlock.copy(this);
+        return newMovingBlock;
+    }
+
+    copy(movingBlock) {
+        super.copy(movingBlock);
+        this.startPoint = movingBlock.startPoint.clone();
+        this.endPoint = movingBlock.endPoint.clone();
+        this.direction = movingBlock.direction;
+        this.speed = movingBlock.speed;
+        this.positionParameter = movingBlock.offset;
     }
 
     update() {

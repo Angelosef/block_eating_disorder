@@ -6,6 +6,12 @@ export default class Button extends Activator {
         super(scene, x, y, 'button');
     }
 
+    clone() {
+        const newButton = new Button(this.scene, 0, 0);
+        newButton.copy(this);
+        return newButton;
+    }
+
     eventTriggered() {
         return this.isDown();
     }

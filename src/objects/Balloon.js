@@ -8,11 +8,22 @@ export default class Balloon extends DynamicObject {
     constructor(scene, x, y) {
         super(scene, x, y, 'balloon');
         this.body.setAllowGravity(false);
+        this.mass = 1;
         this.speed = 100;
     }
 
+    clone() {
+        const newBalloon = new Balloon(this.scene, 0, 0);
+        newBalloon.copy(this);
+        return newBalloon;
+    }
+
+    copy(balloon) {
+        super.copy(balloon);
+        this.speed = balloon.speed;
+    }
+
     handleCollision(object) {
-        
         if(object instanceof Trampoline) {
             const vel = object.getAddedVelocity();
             this.body.setVelocity(vel.x, vel.y);
@@ -22,11 +33,11 @@ export default class Balloon extends DynamicObject {
         }
         else if (object instanceof DynamicObject) {
             this.movingObjectCollision(object);
-            this.scene.physics.world.collide(this, object);
+            Utils.separate(this.body, object.body);
         }
         else if (object instanceof StaticObject) {
+            Utils.separate(this.body, object.body);
             this.body.setVelocity(0, 0);
-            this.scene.physics.world.collide(this, object);
         }
         else {
             super.handleCollision(object);
@@ -34,10 +45,8 @@ export default class Balloon extends DynamicObject {
     }
 
     movingObjectCollision(object) {
-        const delta = this.scene.game.loop.delta;
-        const dt = delta / 1000;
-        const objectVelocityX = object.body.deltaX() / dt;
-        const objectVelocityY = object.body.deltaY() / dt;
+        const objectVelocityX = object.body.velocity.x;
+        const objectVelocityY = object.body.velocity.y;
         
         switch(Utils.collisionType(this.body, object.body)) {
             case Utils.directionEnum.left:

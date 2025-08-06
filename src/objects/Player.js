@@ -7,6 +7,7 @@ import Activator from "./activators/Activator";
 import Trampoline from "./trampoline";
 import Balloon from "./Balloon";
 import StaticObject from "./StaticObject";
+import DynamicBlock from "./blocks/DynamicBlock";
 
 export default class Player extends DynamicObject {
   constructor(scene, x, y) {
@@ -21,7 +22,23 @@ export default class Player extends DynamicObject {
     this.setDragY(10);
   }
 
+  clone() {
+    const newPlayer = new Player(this.scene, 0, 0);
+    newPlayer.copy(this);
+    return newPlayer;
+  }
+
+  copy(player) {
+    super.copy(player);
+    this.direction = player.direction;
+    this.isAlive = player.isAlive;
+    this.won = player.won;
+    this.movingForce = player.movingForce;
+    this.ableToJump = player.ableToJump;
+  }
+
   update() {
+    //console.log("player velocity: ", this.body.velocity);
     if (this.inputManager.isDown('A')) {
       this.direction = Utils.directionEnum.left;
       this.moveHorizontally(-1 * this.movingForce);
@@ -41,14 +58,14 @@ export default class Player extends DynamicObject {
   }
 
     moveHorizontally(inputForce) {
+      const k1 = 60;
       const k2 = 5;
-      const k3 = 30;
       const velocityX = this.body.velocity.x;
 
       let acceleration = inputForce;
-      acceleration -= k2 * velocityX;
-      if(Math.abs(velocityX) > 5) {
-        acceleration -= k3 * Math.sign(velocityX);
+      if(!this.ableToJump) {
+        acceleration -= k1 * Math.sign(velocityX);
+        acceleration -= k2 * velocityX;
       }
       
       this.setAccelerationX(acceleration);
@@ -56,19 +73,25 @@ export default class Player extends DynamicObject {
 
     handleCollision(object) {
       if (object instanceof Lava) {
+        console.log("died");
         this.isAlive = false;
       }
       else if (object instanceof Flag) {
+        console.log("won");
         this.won = true;
       }
       else if (object instanceof Balloon) {
-        Utils.doNothing();
+        super.handleCollision(object);
       }
       else if (object instanceof Trampoline) {
         this.handleTrampolineCollision(object);
       }
       else if (object instanceof Activator) {
         Utils.doNothing();
+      }
+      else if (object instanceof DynamicBlock) {
+        this.checkJump(object);
+        super.handleCollision(object);
       }
       else if (object instanceof StaticObject) {
         this.checkJump(object);
@@ -77,6 +100,7 @@ export default class Player extends DynamicObject {
       else if (object instanceof DynamicObject) {
         this.checkJump(object);
         super.dynamicObjectCollision(object);
+        
       }
 
       else {
@@ -93,31 +117,6 @@ export default class Player extends DynamicObject {
       else {
         this.body.setVelocityY(trampoline.getAddedVelocity().y);
       }
-    }
-
-    collisionType(object) {
-      const body1 = this.body;
-      const body2 = object.body;
-
-      const leftOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.left);
-      const rightOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.right);
-      const upOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.up);
-      const downOverlap = Utils.sideOverlap(body1, body2, Utils.directionEnum.down);
-
-      const overlaps = [
-          { dir: Utils.directionEnum.left, val: leftOverlap },
-          { dir: Utils.directionEnum.right, val: rightOverlap },
-          { dir: Utils.directionEnum.up, val: upOverlap },
-          { dir: Utils.directionEnum.down, val: downOverlap }
-      ];
-
-      let maxOverlap = overlaps[0];
-      for (let i = 0; i < overlaps.length; i++) {
-          if (overlaps[i].val > maxOverlap.val) {
-              maxOverlap = overlaps[i];
-          }
-      }
-      return maxOverlap.dir;
     }
 
     checkJump(object) {

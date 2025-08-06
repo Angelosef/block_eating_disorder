@@ -9,6 +9,18 @@ export default class Trampoline extends StaticObject {
         this.speed = 300;
     }
 
+    clone() {
+        const newTrampoline = new Trampoline(this.scene, 0, 0);
+        newTrampoline.copy(this);
+        return newTrampoline;
+    }
+
+    copy(trampoline) {
+        super.copy(trampoline);
+        this.direction = trampoline.direction;
+        this.speed = trampoline.speed;
+    }
+
     getDirection() {
         return this.direction;
     }
