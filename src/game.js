@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import Playground from './scenes/playground.js';
 
-const width = 800;
-const height = 600;
+const width = 1000;
+const height = 700;
 
 const config = {
   type: Phaser.AUTO,

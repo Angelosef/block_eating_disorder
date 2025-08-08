@@ -1,0 +1,18 @@
+{ "object":
+    {
+     "gid":2,
+     "height":32,
+     "id":11,
+     "name":"",
+     "rotation":0,
+     "type":"Button",
+     "visible":true,
+     "width":32
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"..\/sprite_sheet.tsx"
+    },
+ "type":"template"
+}

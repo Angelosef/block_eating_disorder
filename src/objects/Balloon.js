@@ -12,6 +12,11 @@ export default class Balloon extends DynamicObject {
         this.speed = 100;
     }
 
+    static createFromTiledObject(scene, tiledObject) {
+        const { x, y } = tiledObject;
+        return new Balloon(scene, x, y);
+    }
+
     clone() {
         const newBalloon = new Balloon(this.scene, 0, 0);
         newBalloon.copy(this);

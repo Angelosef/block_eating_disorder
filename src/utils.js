@@ -22,6 +22,13 @@ export default class Utils {
       down: 3
     };
 
+    static directionEnum2 = {
+        'left': 0,
+        'right': 1,
+        'up': 2,
+        'down': 3
+    };
+
     static directionToVector(direction) {
         switch(direction) {
             case Utils.directionEnum.left:

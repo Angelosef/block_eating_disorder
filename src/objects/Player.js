@@ -22,6 +22,11 @@ export default class Player extends DynamicObject {
     this.setDragY(10);
   }
 
+  static createFromTiledObject(scene, tiledObject) {
+    const { x, y } = tiledObject;
+    return new Player(scene, x, y);
+  }
+
   clone() {
     const newPlayer = new Player(this.scene, 0, 0);
     newPlayer.copy(this);

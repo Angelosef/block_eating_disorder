@@ -3,10 +3,25 @@ import Utils from "../utils";
 
 
 export default class Trampoline extends StaticObject {
-    constructor(scene, x, y, direction=Utils.directionEnum.up) {
+    constructor(scene, x, y, direction=Utils.directionEnum2['up']) {
         super(scene, x, y, 'trampoline');
         this.direction = direction;
         this.speed = 300;
+    }
+
+    static createFromTiledObject(scene, tiledObject) {
+        const { x, y } = tiledObject;
+
+        const props = {};
+        if (Array.isArray(tiledObject.properties)) {
+            for (const prop of tiledObject.properties) {
+                props[prop.name] = prop.value;
+            }
+        }
+
+        const direction = Utils.directionEnum2[props.direction];
+
+        return new Trampoline(scene, x, y, direction);
     }
 
     clone() {

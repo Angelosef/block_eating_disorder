@@ -13,6 +13,23 @@ export default class StaticBlock extends StaticObject {
         }
     }
 
+    static createFromTiledObject(scene, tiledObject) {
+        const { x, y } = tiledObject;
+
+        const props = {};
+        if (Array.isArray(tiledObject.properties)) {
+            for (const prop of tiledObject.properties) {
+                props[prop.name] = prop.value;
+            }
+        }
+
+        const timesEaten = props.timesEaten;
+        const maxTimesEaten = props.maxTimesEaten;
+
+        return new StaticBlock(scene, x, y, timesEaten, maxTimesEaten);
+    }
+
+
     clone() {
         const newStaticBlock = new StaticBlock(this.scene, 0, 0);
         newStaticBlock.copy(this);

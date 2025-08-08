@@ -13,7 +13,31 @@ export default class MovingBlock extends StaticObject {
         this.direction = direction;
         this.speed = speed;
         this.positionParameter = offset;
-        this.setFrictionX(1);
+    }
+
+    static createFromTiledObject(scene, tiledObject) {
+        const { x, y, width, height} = tiledObject;
+        const startPoint = new Phaser.Math.Vector2(
+        x - width / 2,
+        y - height / 2 // Tiled Y is at bottom of tile
+        );
+
+        const props = {};
+        if (Array.isArray(tiledObject.properties)) {
+            for (const prop of tiledObject.properties) {
+                props[prop.name] = prop.value;
+            }
+        }
+
+        const endPoint = new Phaser.Math.Vector2(
+        props.end_x - width / 2,
+        props.end_y - height / 2
+        );
+        const offset = props.offset;
+        const direction = props.direction;
+        const speed = props.speed;
+
+        return new MovingBlock(scene, startPoint, endPoint, offset, direction, speed);
     }
 
     clone() {
